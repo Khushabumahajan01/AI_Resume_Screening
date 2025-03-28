@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Upload Form</title>
+    <link rel="stylesheet" href="upload.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Resume Upload Form</h2>
+        <form id="resumeForm" action="/upload-resume" method="post" enctype="multipart/form-data">
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" required>
+
+            <h2>Resume Upload Form</h2>
+            <input type="file" name="resume-file" id="resume-file" accept=".pdf,.doc,.docx" required>
+
+            <center><button type="submit" class="btn">Submit</button></center>
+        </form>
+
+        <p id="upload-status"></p>
+    </div>
+
+    <!-- Modal Popup -->
+    <div id="popupModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p id="modal-message"></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('resumeForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            try {
+                const response = await fetch('/upload-resume', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+
+                document.getElementById('modal-message').textContent = result.message;
+                document.getElementById('popupModal').style.display = "block";
+            } catch (error) {
+                document.getElementById('modal-message').textContent = 'Upload failed. Please try again.';
+                document.getElementById('popupModal').style.display = "block";
+            }
+        });
+
+        document.querySelector('.close').addEventListener('click', function () {
+            document.getElementById('popupModal').style.display = "none";
+        });
+
+        window.onclick = function (event) {
+            const modal = document.getElementById('popupModal');
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
